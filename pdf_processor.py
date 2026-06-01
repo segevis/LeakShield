@@ -1,32 +1,38 @@
 # ==========================================================
-# PDF Processing Module
+# PDF Processor Module
 # ----------------------------------------------------------
-# This module is responsible for extracting text from PDF files.
-#
-# It performs:
-# - Opening the PDF file
-# - Iterating over all pages
-# - Extracting textual content from each page
-#
-# Output:
-# A list of tuples → (page_number, page_text)
-#
-# This is the entry point of the data pipeline.
+# Extracts text from PDF files page by page.
+# Debug printing is disabled by default to avoid exposing
+# sensitive document content in the terminal.
 # ==========================================================
 
 from pypdf import PdfReader
 
-def extract_text(pdf_path):
-    reader = PdfReader(pdf_path)
-    pages = []
 
-    for i, page in enumerate(reader.pages):
-        text = page.extract_text()
-        if text:
-            print("\n" + "=" * 70)
-            print(f"RAW TEXT FROM PAGE {i + 1}:")
+def extract_text(pdf_path, debug=False):
+    """
+    Extract text from a PDF file.
+
+    Args:
+        pdf_path: Path to the PDF file.
+        debug: If True, prints raw extracted text per page.
+
+    Returns:
+        A list of tuples: (page_number, extracted_text)
+    """
+    reader = PdfReader(pdf_path)
+    pages_text = []
+
+    for page_number, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
+
+        if debug:
+            print()
+            print("=" * 70)
+            print(f"RAW TEXT FROM PAGE {page_number}:")
             print(repr(text))
             print("=" * 70)
-            pages.append((i + 1, text))
 
-    return pages
+        pages_text.append((page_number, text))
+
+    return pages_text

@@ -76,6 +76,7 @@ def analyze_pdf(
     output_json="output/results.json",
     output_csv="output/results.csv",
     threshold=0.45,
+    debug=False,
 ):
     """
     Analyze a PDF file and save JSON/CSV outputs.
@@ -101,7 +102,7 @@ def analyze_pdf(
         threshold=threshold,
     )
 
-    pages = extract_text(pdf_path)
+    pages = extract_text(pdf_path, debug=debug)
 
     all_results = []
     total_sentences = 0
