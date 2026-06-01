@@ -1,0 +1,10 @@
+# ============================================
+# Project dependencies
+# ============================================
+
+transformers
+torch
+pypdf
+joblib
+scikit-learn
+pandas
