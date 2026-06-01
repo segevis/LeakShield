@@ -13,8 +13,9 @@
 
 PDF_PATH = "input\hebrew_test_input_10_pages.pdf"
 
-MODEL_PATH = "models/leak_classifier.pkl"
-VECTORIZER_PATH = "models/tfidf_vectorizer.pkl"
+MODEL_PATH = "models/comparison_svm_19000.pkl"
+VECTORIZER_PATH = "models/comparison_tfidf_svm_19000.pkl"
+ACTIVE_MODEL_NAME = "svm_19000_augmented"
 
 OUTPUT_JSON = "output/results.json"
 OUTPUT_CSV = "output/results.csv"

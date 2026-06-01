@@ -1,25 +1,16 @@
 # ==========================================================
-# Machine Learning Classification Module
+# Machine Learning Classifier Module
 # ----------------------------------------------------------
-# This module is responsible for detecting information leakage
-# using a trained machine learning model.
+# Loads a trained classifier and TF-IDF vectorizer.
 #
-# How it works:
-# 1. Loads a pre-trained classifier (Logistic Regression / etc.)
-# 2. Loads a TF-IDF vectorizer used during training
-# 3. Converts input text into numerical features
-# 4. Predicts:
-#    - LEAK (sensitive information)
-#    - NON_LEAK (non-sensitive information)
-#
-# Output:
-# - Classification label
-# - Confidence score
-#
-# This is the "decision layer" of the system.
+# Supports:
+# - Models with predict_proba, such as Logistic Regression
+# - Linear SVM models with decision_function, such as LinearSVC
 # ==========================================================
 
+import math
 import joblib
+
 
 class LeakClassifier:
     def __init__(self, model_path, vectorizer_path, threshold=0.45):
@@ -27,13 +18,46 @@ class LeakClassifier:
         self.vectorizer = joblib.load(vectorizer_path)
         self.threshold = threshold
 
-    def classify(self, text):
-        vec = self.vectorizer.transform([text])
-        probs = self.model.predict_proba(vec)[0]
+    def _score_with_predict_proba(self, X):
+        probabilities = self.model.predict_proba(X)[0]
 
-        leak_prob = float(probs[1])
+        if len(probabilities) == 1:
+            return float(probabilities[0])
+
+        return float(probabilities[1])
+
+    def _score_with_decision_function(self, X):
+        decision_score = self.model.decision_function(X)
+
+        if hasattr(decision_score, "__len__"):
+            decision_score = decision_score[0]
+
+        # Convert SVM decision score to a pseudo-confidence in range [0, 1].
+        # This is not a calibrated probability, but it provides a useful
+        # confidence-like score for display and ranking.
+        return 1 / (1 + math.exp(-float(decision_score)))
+
+    def predict_leak_probability(self, text):
+        X = self.vectorizer.transform([text])
+
+        if hasattr(self.model, "predict_proba"):
+            return self._score_with_predict_proba(X)
+
+        if hasattr(self.model, "decision_function"):
+            return self._score_with_decision_function(X)
+
+        prediction = self.model.predict(X)[0]
+        return float(prediction)
+
+    def classify(self, text):
+        leak_score = self.predict_leak_probability(text)
+
+        if leak_score >= self.threshold:
+            label = "LEAK"
+        else:
+            label = "NON_LEAK"
 
         return {
-            "label": "LEAK" if leak_prob >= self.threshold else "NON_LEAK",
-            "confidence": round(leak_prob, 4)
+            "label": label,
+            "confidence": round(leak_score, 4),
         }
