@@ -1,0 +1,21 @@
+﻿text,label,category,case_id,expected_reason,prediction,is_correct
+הקובץ מסביר מהו סיכון עזיבה של לקוחות.,0,CUSTOMERS_SALES,blind_v6_050,blind test new phrasing not used in training,1,False
+במסמך הבקרה מופיע כי הקובץ מסביר מהו סיכון עזיבה של לקוחות.,0,CUSTOMERS_SALES,blind_v6_050_var,blind test prefixed variation,1,False
+"לפי הדוח, הנספח מסביר מהם נתוני פעילות של משתמשים.",0,CUSTOMERS_SALES,blind_v6_056_var,blind test prefixed variation,1,False
+במסמך הבקרה מופיע כי הטופס מסביר מהו סיכום טיפול רפואי.,0,MEDICAL_EDUCATION,blind_v6_082_var,blind test prefixed variation,1,False
+במסמך הבקרה מופיע כי מסמך ההדרכה מסביר מהי יכולת חדשה במוצר.,0,PRODUCT_RND,blind_v6_034_var,blind test prefixed variation,1,False
+במסמך הבקרה מופיע כי הדוח מסביר מהן הגדרות קובץ PDF.,0,PII_METADATA,blind_v6_096_var,blind test prefixed variation,1,False
+הנספח מסביר כיצד מדרגים סיכון של ספק חיצוני.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_100,blind test new phrasing not used in training,1,False
+הנספח מסביר מהם נתוני פעילות של משתמשים.,0,CUSTOMERS_SALES,blind_v6_056,blind test new phrasing not used in training,1,False
+במסמך הבקרה מופיע כי המצגת מסבירה כיצד קוראים תרשים פריסה של מערכת.,0,INFRA_DEVOPS,blind_v6_018_var,blind test prefixed variation,1,False
+הדוח מפרט יעדי מכירה פנימיים לפי אזורים.,1,BUSINESS_STRATEGY,blind_v6_045,blind test new phrasing not used in training,0,False
+הדוח מציג רשימת עסקאות פתוחות לפי נציג מכירות.,1,CUSTOMERS_SALES,blind_v6_051,blind test new phrasing not used in training,0,False
+במסמך הבקרה מופיע כי הנספח מסביר מהו ממצא בדיקה.,0,SECURITY_INCIDENTS,blind_v6_070_var,blind test prefixed variation,1,False
+במסמך הבקרה מופיע כי הקובץ מסביר מהו אזור גישה מוגבל.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_102_var,blind test prefixed variation,1,False
+במסמך הבקרה מופיע כי הנספח מסביר מהי בדיקת נאותות.,0,LEGAL_COMPLIANCE,blind_v6_060_var,blind test prefixed variation,1,False
+בנספח החדש נכתב כי המצגת מסבירה מהי גרסת ניסוי של מוצר.,0,PRODUCT_RND,blind_v6_036_var,blind test prefixed variation,1,False
+בנספח החדש נכתב כי המצגת מסבירה מהן features במודל למידת מכונה.,0,AI_MODEL_DATA,blind_v6_004_var,blind test prefixed variation,1,False
+בנספח החדש נכתב כי הנספח מסביר מהו סיום העסקה.,0,HR_PERSONAL,blind_v6_078_var,blind test prefixed variation,1,False
+בנספח החדש נכתב כי הקובץ מסביר מהן הערות משפטיות בהסכם.,0,LEGAL_COMPLIANCE,blind_v6_058_var,blind test prefixed variation,1,False
+בנספח החדש נכתב כי הקובץ מסביר מהי כתובת אימייל.,0,PII_METADATA,blind_v6_092_var,blind test prefixed variation,1,False
+בנספח החדש נכתב כי הנספח מסביר מהן התאמות אישיות בבחינה.,0,MEDICAL_EDUCATION,blind_v6_088_var,blind test prefixed variation,1,False

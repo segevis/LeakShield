@@ -13,11 +13,7 @@ from analysis_pipeline import analyze_pdf
 
 def main():
     try:
-        summary = analyze_pdf(
-            pdf_path=PDF_PATH,
-            output_json=OUTPUT_JSON,
-            output_csv=OUTPUT_CSV,
-        )
+        summary = analyze_pdf(pdf_path=PDF_PATH,output_json=OUTPUT_JSON,output_csv=OUTPUT_CSV,)
 
         print("✔ Analysis completed successfully")
         print("✔ Results saved in output folder")

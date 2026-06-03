@@ -30,3 +30,10 @@ output/*.json
 
 # Keep output folder structure
 !output/.gitkeep
+# Local cleanup archives
+archive_unused_cleanup_*/
+__pycache__/
+*.pyc
+review_clean_code_package_temp/
+final_project_clean_code_for_review.zip
+final_project_clean_current_for_review.zip
