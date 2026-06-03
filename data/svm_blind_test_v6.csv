@@ -1,0 +1,157 @@
+﻿text,label,category,case_id,expected_reason
+הדוח מציג מגבלות פנימיות של מנוע ההמלצות לפני השקה.,1,PRODUCT_RND,blind_v6_037,blind test new phrasing not used in training
+הנספח כולל תיעוד של תקלה ידועה שעדיין לא נפתרה.,1,PRODUCT_RND,blind_v6_039,blind test new phrasing not used in training
+הדוח מסביר מהי חשיפה רגולטורית.,0,LEGAL_COMPLIANCE,blind_v6_062,blind test new phrasing not used in training
+הדוח מסביר כיצד מתועדות החלטות הנהלה.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_104,blind test new phrasing not used in training
+הקובץ כולל כתובת שירות פנימית שאליה נשלחות בקשות הסיווג.,1,AI_MODEL_DATA,blind_v6_005,blind test new phrasing not used in training
+מסמך ההדרכה מסביר מהי יכולת חדשה במוצר.,0,PRODUCT_RND,blind_v6_034,blind test new phrasing not used in training
+"לפי הדוח, המסמך מסביר באופן כללי כיצד מדרגים משתמשים במערכת.",0,SOURCE_IP,blind_v6_026_var,blind test prefixed variation
+המסמך מסביר כיצד מתכננים אחסון גיבויים בארגון.,0,INFRA_DEVOPS,blind_v6_020,blind test new phrasing not used in training
+המסמך מסביר מהי תוכנית התאוששות במקרה השבתה.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_098,blind test new phrasing not used in training
+הדוח מסביר מהו לוח בקרה בסביבת ייצור.,0,INFRA_DEVOPS,blind_v6_022,blind test new phrasing not used in training
+"לפי הדוח, הקובץ מסביר מהו מפתח פרטי ולמה הוא רגיש.",0,TECHNICAL_SECRETS,blind_v6_014_var,blind test prefixed variation
+הנספח מסביר מהו מזהה גישה במערכות תוכנה.,0,TECHNICAL_SECRETS,blind_v6_012,blind test new phrasing not used in training
+הקובץ מסביר מהו סיכון עזיבה של לקוחות.,0,CUSTOMERS_SALES,blind_v6_050,blind test new phrasing not used in training
+הקובץ מסביר כיצד מחשבים בונוס לעובדים.,0,HR_PERSONAL,blind_v6_076,blind test new phrasing not used in training
+הדוח כולל הערכת מנהל על עובד ספציפי בצוות.,1,HR_PERSONAL,blind_v6_073,blind test new phrasing not used in training
+"לפי הדוח, המסמך מסביר כיצד מכינים אומדן הכנסות.",0,BUSINESS_STRATEGY,blind_v6_042_var,blind test prefixed variation
+קובץ התפעול כולל נתיב אחסון פנימי של גיבויי הלקוחות.,1,INFRA_DEVOPS,blind_v6_019,blind test new phrasing not used in training
+הנספח מסביר מהו מזהה עובד.,0,PII_METADATA,blind_v6_094,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי הקובץ מסביר מהו סיכון עזיבה של לקוחות.,0,CUSTOMERS_SALES,blind_v6_050_var,blind test prefixed variation
+הדוח מציין כתובת פנימית של לוח הבקרה בסביבת הייצור.,1,INFRA_DEVOPS,blind_v6_021,blind test new phrasing not used in training
+המסמך כולל מחיר מיוחד שניתן ללקוח מסוים.,1,CUSTOMERS_SALES,blind_v6_053,blind test new phrasing not used in training
+הקובץ כולל הערות עורכי הדין על טיוטת ההסכם.,1,LEGAL_COMPLIANCE,blind_v6_057,blind test new phrasing not used in training
+בנספח החדש נכתב כי הנספח מתאר באופן כללי מהם שירותי רשת בארגון.,0,INFRA_DEVOPS,blind_v6_024_var,blind test prefixed variation
+בנספח החדש נכתב כי המסמך מסביר מדוע לא משאירים ערכים סודיים בקבצי התקנה.,0,TECHNICAL_SECRETS,blind_v6_010_var,blind test prefixed variation
+הדוח מסביר מהי עסקה פתוחה במכירות.,0,CUSTOMERS_SALES,blind_v6_052,blind test new phrasing not used in training
+המסמך מסביר באופן כללי כיצד מדרגים משתמשים במערכת.,0,SOURCE_IP,blind_v6_026,blind test new phrasing not used in training
+הנספח מסביר מהו סיום העסקה.,0,HR_PERSONAL,blind_v6_078,blind test new phrasing not used in training
+"לפי הדוח, הנספח מסביר מהם נתוני פעילות של משתמשים.",0,CUSTOMERS_SALES,blind_v6_056_var,blind test prefixed variation
+בקובץ ההתקנה נשאר ערך סודי שמאפשר גישה לשירות ההודעות.,1,TECHNICAL_SECRETS,blind_v6_009,blind test new phrasing not used in training
+הקובץ מפרט את שלבי החישוב הסודיים של מנוע ההתאמה.,1,SOURCE_IP,blind_v6_027,blind test new phrasing not used in training
+המצגת מסבירה כיצד קוראים תרשים פריסה של מערכת.,0,INFRA_DEVOPS,blind_v6_018,blind test new phrasing not used in training
+המסמך מסביר מה הם תנאי סודיות מסחריים.,0,LEGAL_COMPLIANCE,blind_v6_064,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי הטופס מסביר מהו סיכום טיפול רפואי.,0,MEDICAL_EDUCATION,blind_v6_082_var,blind test prefixed variation
+"לפי הדוח, הנספח מסביר כיצד פועל תהליך אישור אוטומטי באופן כללי.",0,SOURCE_IP,blind_v6_030_var,blind test prefixed variation
+בנספח החדש נכתב כי הנספח מסביר מהו מזהה עובד.,0,PII_METADATA,blind_v6_094_var,blind test prefixed variation
+במסמך הבקרה מופיע כי מסמך ההדרכה מסביר מהי יכולת חדשה במוצר.,0,PRODUCT_RND,blind_v6_034_var,blind test prefixed variation
+במסמך הבקרה מופיע כי הדוח מסביר מהן הגדרות קובץ PDF.,0,PII_METADATA,blind_v6_096_var,blind test prefixed variation
+הנספח מתאר מהי הערכת שווי בעסקה.,0,BUSINESS_STRATEGY,blind_v6_048,blind test new phrasing not used in training
+"לפי הדוח, הנספח מסביר כיצד מדרגים סיכון של ספק חיצוני.",0,OPERATIONS_SUPPLY_CHAIN,blind_v6_100_var,blind test prefixed variation
+בנספח החדש נכתב כי המסמך מסביר מהי תוכנית התאוששות במקרה השבתה.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_098_var,blind test prefixed variation
+המצגת מסבירה מהי גרסת ניסוי של מוצר.,0,PRODUCT_RND,blind_v6_036,blind test new phrasing not used in training
+הנספח מסביר מהו ממצא בדיקה.,0,SECURITY_INCIDENTS,blind_v6_070,blind test new phrasing not used in training
+הנספח מסביר מהי בדיקת נאותות.,0,LEGAL_COMPLIANCE,blind_v6_060,blind test new phrasing not used in training
+המסמך כולל תנאי סודיות מסחריים של שותף עסקי.,1,LEGAL_COMPLIANCE,blind_v6_063,blind test new phrasing not used in training
+הנספח כולל מזהה עובד פנימי לצד שם מלא.,1,PII_METADATA,blind_v6_093,blind test new phrasing not used in training
+"לפי הדוח, הנספח מתאר מהי הערכת שווי בעסקה.",0,BUSINESS_STRATEGY,blind_v6_048_var,blind test prefixed variation
+"לפי הדוח, מסמך ההדרכה מסביר כיצד בונים ציר זמן לאירוע.",0,SECURITY_INCIDENTS,blind_v6_066_var,blind test prefixed variation
+"לפי הדוח, הדוח מסביר כיצד מבצעים הערכת מנהל.",0,HR_PERSONAL,blind_v6_074_var,blind test prefixed variation
+בנספח החדש נכתב כי הדוח מסביר מהי נוסחה לקביעת עדיפות באופן כללי.,0,SOURCE_IP,blind_v6_032_var,blind test prefixed variation
+הנספח כולל מזהה גישה של חשבון מערכת המשמש לפריסות.,1,TECHNICAL_SECRETS,blind_v6_011,blind test new phrasing not used in training
+המסמך כולל פירוט היעדרויות של עובד לפי תאריך.,1,HR_PERSONAL,blind_v6_079,blind test new phrasing not used in training
+בנספח החדש נכתב כי המצגת מסבירה מהו אסימון הרשאה במערכת הזדהות.,0,TECHNICAL_SECRETS,blind_v6_016_var,blind test prefixed variation
+הקובץ כולל שמות לקוחות שנמצאים בסיכון עזיבה גבוה.,1,CUSTOMERS_SALES,blind_v6_049,blind test new phrasing not used in training
+הנספח מסביר כיצד מדרגים סיכון של ספק חיצוני.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_100,blind test new phrasing not used in training
+הנספח מסביר מהם נתוני פעילות של משתמשים.,0,CUSTOMERS_SALES,blind_v6_056,blind test new phrasing not used in training
+הדוח מסביר כיצד מבצעים הערכת מנהל.,0,HR_PERSONAL,blind_v6_074,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי המצגת מסבירה כיצד קוראים תרשים פריסה של מערכת.,0,INFRA_DEVOPS,blind_v6_018_var,blind test prefixed variation
+הקובץ מסביר מהו אזור גישה מוגבל.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_102,blind test new phrasing not used in training
+בנספח החדש נכתב כי הדוח מסביר מהי עסקה פתוחה במכירות.,0,CUSTOMERS_SALES,blind_v6_052_var,blind test prefixed variation
+הדוח מפרט יעדי מכירה פנימיים לפי אזורים.,1,BUSINESS_STRATEGY,blind_v6_045,blind test new phrasing not used in training
+הקובץ מסביר מהו מנוע התאמה במערכות מידע.,0,SOURCE_IP,blind_v6_028,blind test new phrasing not used in training
+הדוח מציג רשימת עסקאות פתוחות לפי נציג מכירות.,1,CUSTOMERS_SALES,blind_v6_051,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי הנספח מסביר מהו ממצא בדיקה.,0,SECURITY_INCIDENTS,blind_v6_070_var,blind test prefixed variation
+הקובץ מסביר מהי כתובת אימייל.,0,PII_METADATA,blind_v6_092,blind test new phrasing not used in training
+הנספח כולל רצף פעולות פנימי של תהליך האישור האוטומטי.,1,SOURCE_IP,blind_v6_029,blind test new phrasing not used in training
+הנספח כולל החלטת ועדה לגבי התאמות אישיות בבחינה.,1,MEDICAL_EDUCATION,blind_v6_087,blind test new phrasing not used in training
+המסמך כולל אומדן הכנסות פנימי לפי לקוחות אסטרטגיים.,1,BUSINESS_STRATEGY,blind_v6_041,blind test new phrasing not used in training
+הנספח כולל פירוט של שירותי הרשת החשופים בתוך הארגון.,1,INFRA_DEVOPS,blind_v6_023,blind test new phrasing not used in training
+"לפי הדוח, הקובץ מסביר מהו מנוע התאמה במערכות מידע.",0,SOURCE_IP,blind_v6_028_var,blind test prefixed variation
+במסמך הבקרה מופיע כי הקובץ מסביר מהו אזור גישה מוגבל.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_102_var,blind test prefixed variation
+בנספח החדש נכתב כי המסמך מסביר כיצד מדווחים היעדרות עובד.,0,HR_PERSONAL,blind_v6_080_var,blind test prefixed variation
+הקובץ כולל ציונים סופיים של סטודנטית לפי קורסים.,1,MEDICAL_EDUCATION,blind_v6_085,blind test new phrasing not used in training
+הדוח הפנימי מציג קבוצת בדיקה שלא פורסמה עבור מודל ההמלצות.,1,AI_MODEL_DATA,blind_v6_007,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי הדוח מסביר כיצד מתועדות החלטות הנהלה.,0,OPERATIONS_SUPPLY_CHAIN,blind_v6_104_var,blind test prefixed variation
+הנספח כולל ממצא בדיקה שממתין לתיקון.,1,SECURITY_INCIDENTS,blind_v6_069,blind test new phrasing not used in training
+הקובץ כולל מפת אזורי גישה מוגבלים במשרד.,1,OPERATIONS_SUPPLY_CHAIN,blind_v6_101,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי הנספח מסביר מהי בדיקת נאותות.,0,LEGAL_COMPLIANCE,blind_v6_060_var,blind test prefixed variation
+הדוח מסביר כיצד מחלקים דאטה לקבוצת אימון ובדיקה.,0,AI_MODEL_DATA,blind_v6_008,blind test new phrasing not used in training
+בנספח החדש נכתב כי הדוח מסביר כיצד מחלקים דאטה לקבוצת אימון ובדיקה.,0,AI_MODEL_DATA,blind_v6_008_var,blind test prefixed variation
+הדוח מציין חשיפה רגולטורית שעדיין בבירור פנימי.,1,LEGAL_COMPLIANCE,blind_v6_061,blind test new phrasing not used in training
+"לפי הדוח, המצגת מסבירה מהי תוכנית תמחור.",0,BUSINESS_STRATEGY,blind_v6_044_var,blind test prefixed variation
+הדוח מסביר מהן הגדרות קובץ PDF.,0,PII_METADATA,blind_v6_096,blind test new phrasing not used in training
+המסמך מסביר מהו מחיר מיוחד ללקוח.,0,CUSTOMERS_SALES,blind_v6_054,blind test new phrasing not used in training
+המסמך מסביר מדוע לא משאירים ערכים סודיים בקבצי התקנה.,0,TECHNICAL_SECRETS,blind_v6_010,blind test new phrasing not used in training
+נספח הבקרה מפרט את כללי ההפעלה הפנימיים של הצ׳אטבוט הארגוני.,1,AI_MODEL_DATA,blind_v6_001,blind test new phrasing not used in training
+בנספח החדש נכתב כי המצגת מסבירה מהי גרסת ניסוי של מוצר.,0,PRODUCT_RND,blind_v6_036_var,blind test prefixed variation
+"לפי הדוח, הקובץ מסביר כיצד מחשבים בונוס לעובדים.",0,HR_PERSONAL,blind_v6_076_var,blind test prefixed variation
+הדוח מסביר כיצד מזהים מגבלות במנוע המלצות.,0,PRODUCT_RND,blind_v6_038,blind test new phrasing not used in training
+הנספח מתאר באופן כללי מהם שירותי רשת בארגון.,0,INFRA_DEVOPS,blind_v6_024,blind test new phrasing not used in training
+הנספח כולל ממצאי בדיקת נאותות שלא פורסמו.,1,LEGAL_COMPLIANCE,blind_v6_059,blind test new phrasing not used in training
+הטופס מסביר מהו סיכום טיפול רפואי.,0,MEDICAL_EDUCATION,blind_v6_082,blind test new phrasing not used in training
+בנספח החדש נכתב כי הדוח מסביר מהו לוח בקרה בסביבת ייצור.,0,INFRA_DEVOPS,blind_v6_022_var,blind test prefixed variation
+"לפי הדוח, חומר ההדרכה מסביר מהו צ׳אטבוט ארגוני וכיצד משתמשים בו.",0,AI_MODEL_DATA,blind_v6_002_var,blind test prefixed variation
+תרשים הפריסה חושף את שמות השרתים הפנימיים ואת תפקידם.,1,INFRA_DEVOPS,blind_v6_017,blind test new phrasing not used in training
+הנספח מסביר מהי תקלה ידועה במוצר תוכנה.,0,PRODUCT_RND,blind_v6_040,blind test new phrasing not used in training
+"לפי הדוח, הנספח מסביר מהו מזהה גישה במערכות תוכנה.",0,TECHNICAL_SECRETS,blind_v6_012_var,blind test prefixed variation
+הדוח כולל מידע אישי על קושי רגשי של תלמיד.,1,MEDICAL_EDUCATION,blind_v6_083,blind test new phrasing not used in training
+בנספח החדש נכתב כי המצגת מסבירה מהן features במודל למידת מכונה.,0,AI_MODEL_DATA,blind_v6_004_var,blind test prefixed variation
+"לפי הדוח, הנספח מסביר מהי תקלה ידועה במוצר תוכנה.",0,PRODUCT_RND,blind_v6_040_var,blind test prefixed variation
+מסמך האירוע כולל ציר זמן פנימי של התקלה האבטחתית.,1,SECURITY_INCIDENTS,blind_v6_065,blind test new phrasing not used in training
+בנספח החדש נכתב כי הקובץ מסביר כיצד מחושבים ציונים סופיים.,0,MEDICAL_EDUCATION,blind_v6_086_var,blind test prefixed variation
+במסמך הבקרה מופיע כי הדוח מסביר כיצד מזהים מגבלות במנוע המלצות.,0,PRODUCT_RND,blind_v6_038_var,blind test prefixed variation
+המסמך מסביר כיצד מדווחים היעדרות עובד.,0,HR_PERSONAL,blind_v6_080,blind test new phrasing not used in training
+הקובץ מסביר מהו מפתח פרטי ולמה הוא רגיש.,0,TECHNICAL_SECRETS,blind_v6_014,blind test new phrasing not used in training
+הקובץ מסביר כיצד מחושבים ציונים סופיים.,0,MEDICAL_EDUCATION,blind_v6_086,blind test new phrasing not used in training
+המסמך מסביר כיצד מכינים אומדן הכנסות.,0,BUSINESS_STRATEGY,blind_v6_042,blind test new phrasing not used in training
+הנספח כולל הערכת שווי פנימית של עסקה אפשרית.,1,BUSINESS_STRATEGY,blind_v6_047,blind test new phrasing not used in training
+הטופס כולל סיכום טיפול רפואי של מטופל מסוים.,1,MEDICAL_EDUCATION,blind_v6_081,blind test new phrasing not used in training
+המסמך כולל כתובת מגורים ומספר טלפון של לקוח.,1,PII_METADATA,blind_v6_089,blind test new phrasing not used in training
+בנספח החדש נכתב כי הדוח מסביר כיצד מזהים קושי רגשי אצל תלמידים באופן כללי.,0,MEDICAL_EDUCATION,blind_v6_084_var,blind test prefixed variation
+מסמך ההדרכה מסביר כיצד בונים ציר זמן לאירוע.,0,SECURITY_INCIDENTS,blind_v6_066,blind test new phrasing not used in training
+המצגת מציגה תוכנית תמחור שעדיין לא אושרה לפרסום.,1,BUSINESS_STRATEGY,blind_v6_043,blind test new phrasing not used in training
+המסמך מצרף תרשים פנימי של מנגנון דירוג המשתמשים.,1,SOURCE_IP,blind_v6_025,blind test new phrasing not used in training
+הנספח כולל נתוני פעילות של לקוחות מרכזיים בחודש האחרון.,1,CUSTOMERS_SALES,blind_v6_055,blind test new phrasing not used in training
+המסמך מסביר מהי כתובת שירות במערכות מבוזרות.,0,AI_MODEL_DATA,blind_v6_006,blind test new phrasing not used in training
+הקובץ כולל ניתוח פנימי של סיבת כשל אבטחה.,1,SECURITY_INCIDENTS,blind_v6_071,blind test new phrasing not used in training
+בנספח החדש נכתב כי הדוח מסביר מהי חשיפה רגולטורית.,0,LEGAL_COMPLIANCE,blind_v6_062_var,blind test prefixed variation
+המצגת מסבירה מהי תוכנית תמחור.,0,BUSINESS_STRATEGY,blind_v6_044,blind test new phrasing not used in training
+בנספח החדש נכתב כי הדוח מסביר כיצד מגדירים יעדי מכירה.,0,BUSINESS_STRATEGY,blind_v6_046_var,blind test prefixed variation
+המצגת כוללת צילומי מסך של גרסת ניסוי שעדיין לא הושקה.,1,PRODUCT_RND,blind_v6_035,blind test new phrasing not used in training
+במסמך הבקרה מופיע כי המסמך מסביר כיצד מתכננים אחסון גיבויים בארגון.,0,INFRA_DEVOPS,blind_v6_020_var,blind test prefixed variation
+הדוח חושף נוסחה פנימית לקביעת עדיפות לקוחות.,1,SOURCE_IP,blind_v6_031,blind test new phrasing not used in training
+הנספח מציין עובד שמועמד לסיום העסקה.,1,HR_PERSONAL,blind_v6_077,blind test new phrasing not used in training
+חומר ההדרכה מסביר מהו צ׳אטבוט ארגוני וכיצד משתמשים בו.,0,AI_MODEL_DATA,blind_v6_002,blind test new phrasing not used in training
+ה-PDF נשמר עם שם עורך פנימי בהגדרות הקובץ.,1,PII_METADATA,blind_v6_095,blind test new phrasing not used in training
+הדוח כולל החלטות הנהלה שלא פורסמו לעובדים.,1,OPERATIONS_SUPPLY_CHAIN,blind_v6_103,blind test new phrasing not used in training
+הקובץ מסביר כיצד מנתחים סיבת כשל.,0,SECURITY_INCIDENTS,blind_v6_072,blind test new phrasing not used in training
+המצגת מסבירה מהו אסימון הרשאה במערכת הזדהות.,0,TECHNICAL_SECRETS,blind_v6_016,blind test new phrasing not used in training
+מסמך המוצר מתאר יכולת חדשה שעדיין לא הוכרזה לציבור.,1,PRODUCT_RND,blind_v6_033,blind test new phrasing not used in training
+המצגת מסבירה מהן features במודל למידת מכונה.,0,AI_MODEL_DATA,blind_v6_004,blind test new phrasing not used in training
+קובץ הייצוא כולל כתובות אימייל פרטיות של משתמשים.,1,PII_METADATA,blind_v6_091,blind test new phrasing not used in training
+הדוח מציין בקרת אבטחה חסרה במערכת התשלומים.,1,SECURITY_INCIDENTS,blind_v6_067,blind test new phrasing not used in training
+בנספח החדש נכתב כי הנספח מסביר מהו סיום העסקה.,0,HR_PERSONAL,blind_v6_078_var,blind test prefixed variation
+בקובץ הסביבה מופיע מפתח פרטי של שירות הבדיקות.,1,TECHNICAL_SECRETS,blind_v6_013,blind test new phrasing not used in training
+הדוח מסביר מהי בקרת אבטחה במערכת.,0,SECURITY_INCIDENTS,blind_v6_068,blind test new phrasing not used in training
+בנספח החדש נכתב כי הקובץ מסביר מהן הערות משפטיות בהסכם.,0,LEGAL_COMPLIANCE,blind_v6_058_var,blind test prefixed variation
+הקובץ מסביר מהן הערות משפטיות בהסכם.,0,LEGAL_COMPLIANCE,blind_v6_058,blind test new phrasing not used in training
+הנספח מסביר כיצד פועל תהליך אישור אוטומטי באופן כללי.,0,SOURCE_IP,blind_v6_030,blind test new phrasing not used in training
+הדוח מסביר כיצד מגדירים יעדי מכירה.,0,BUSINESS_STRATEGY,blind_v6_046,blind test new phrasing not used in training
+הנספח מציג ספק חיצוני שסומן כסיכון גבוה.,1,OPERATIONS_SUPPLY_CHAIN,blind_v6_099,blind test new phrasing not used in training
+הלוג שמור עם אסימון הרשאה פעיל של משתמש שירות.,1,TECHNICAL_SECRETS,blind_v6_015,blind test new phrasing not used in training
+הדוח מסביר מהי נוסחה לקביעת עדיפות באופן כללי.,0,SOURCE_IP,blind_v6_032,blind test new phrasing not used in training
+"לפי הדוח, המסמך מסביר מהי כתובת שירות במערכות מבוזרות.",0,AI_MODEL_DATA,blind_v6_006_var,blind test prefixed variation
+הנספח מסביר מהן התאמות אישיות בבחינה.,0,MEDICAL_EDUCATION,blind_v6_088,blind test new phrasing not used in training
+"לפי הדוח, המסמך מסביר מה הם תנאי סודיות מסחריים.",0,LEGAL_COMPLIANCE,blind_v6_064_var,blind test prefixed variation
+"לפי הדוח, הקובץ מסביר כיצד מנתחים סיבת כשל.",0,SECURITY_INCIDENTS,blind_v6_072_var,blind test prefixed variation
+המסמך מסביר מהי כתובת מגורים.,0,PII_METADATA,blind_v6_090,blind test new phrasing not used in training
+הדוח מסביר כיצד מזהים קושי רגשי אצל תלמידים באופן כללי.,0,MEDICAL_EDUCATION,blind_v6_084,blind test new phrasing not used in training
+בנספח החדש נכתב כי הקובץ מסביר מהי כתובת אימייל.,0,PII_METADATA,blind_v6_092_var,blind test prefixed variation
+הקובץ כולל סכום בונוס אישי לעובדי המחלקה.,1,HR_PERSONAL,blind_v6_075,blind test new phrasing not used in training
+בנספח החדש נכתב כי הנספח מסביר מהן התאמות אישיות בבחינה.,0,MEDICAL_EDUCATION,blind_v6_088_var,blind test prefixed variation
+"לפי הדוח, הדוח מסביר מהי בקרת אבטחה במערכת.",0,SECURITY_INCIDENTS,blind_v6_068_var,blind test prefixed variation
+במסמך המחקר צורפה טבלת features ששימשה את מודל דירוג הסיכון.,1,AI_MODEL_DATA,blind_v6_003,blind test new phrasing not used in training
+"לפי הדוח, המסמך מסביר מהו מחיר מיוחד ללקוח.",0,CUSTOMERS_SALES,blind_v6_054_var,blind test prefixed variation
+המסמך כולל תוכנית התאוששות פנימית במקרה השבתה.,1,OPERATIONS_SUPPLY_CHAIN,blind_v6_097,blind test new phrasing not used in training
+"לפי הדוח, המסמך מסביר מהי כתובת מגורים.",0,PII_METADATA,blind_v6_090_var,blind test prefixed variation

@@ -1,0 +1,144 @@
+{
+  "model_name": "svm_final_38k_dedup_balanced_word_1_2_C_0_5",
+  "dataset": "data/hebrew_data_leakage_dataset_38000_definition_enhanced_svm.csv",
+  "blind_v6": "data/svm_blind_test_v6.csv",
+  "output_dir": "models/svm_final",
+  "configuration": {
+    "dataset_variant": "38k_dedup_balanced",
+    "feature_config": "word_1_2_25k_min4",
+    "model": "LinearSVC",
+    "C": 0.5,
+    "class_weight": "balanced",
+    "tfidf": {
+      "analyzer": "word",
+      "ngram_range": [
+        1,
+        2
+      ],
+      "max_features": 25000,
+      "min_df": 4,
+      "sublinear_tf": true
+    }
+  },
+  "rows": 13410,
+  "label_distribution": {
+    "0": 6705,
+    "1": 6705
+  },
+  "groups": 3394,
+  "fold_results": [
+    {
+      "accuracy": 0.9929157345264727,
+      "precision": 0.9866291344123856,
+      "recall": 1.0,
+      "f1": 0.9932695713779667,
+      "confusion_matrix": [
+        [
+          1261,
+          19
+        ],
+        [
+          0,
+          1402
+        ]
+      ],
+      "fold": 1,
+      "train_size": 10728,
+      "test_size": 2682
+    },
+    {
+      "accuracy": 0.9992542878448919,
+      "precision": 1.0,
+      "recall": 0.9984697781178271,
+      "f1": 0.9992343032159265,
+      "confusion_matrix": [
+        [
+          1375,
+          0
+        ],
+        [
+          2,
+          1305
+        ]
+      ],
+      "fold": 2,
+      "train_size": 10728,
+      "test_size": 2682
+    },
+    {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "confusion_matrix": [
+        [
+          1203,
+          0
+        ],
+        [
+          0,
+          1479
+        ]
+      ],
+      "fold": 3,
+      "train_size": 10728,
+      "test_size": 2682
+    },
+    {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "confusion_matrix": [
+        [
+          1219,
+          0
+        ],
+        [
+          0,
+          1463
+        ]
+      ],
+      "fold": 4,
+      "train_size": 10728,
+      "test_size": 2682
+    },
+    {
+      "accuracy": 0.9992542878448919,
+      "precision": 1.0,
+      "recall": 0.9981024667931688,
+      "f1": 0.9990503323836657,
+      "confusion_matrix": [
+        [
+          1628,
+          0
+        ],
+        [
+          2,
+          1052
+        ]
+      ],
+      "fold": 5,
+      "train_size": 10728,
+      "test_size": 2682
+    }
+  ],
+  "blind_v6_metrics": {
+    "accuracy": 0.8717948717948718,
+    "precision": 0.7352941176470589,
+    "recall": 0.9615384615384616,
+    "f1": 0.8333333333333334,
+    "confusion_matrix": [
+      [
+        86,
+        18
+      ],
+      [
+        2,
+        50
+      ]
+    ],
+    "errors": 20,
+    "errors_path": "models\\svm_final\\svm_final_blind_v6_errors.csv"
+  }
+}
