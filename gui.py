@@ -7,31 +7,36 @@
 # - Choose a PDF file
 # - Run analysis
 # - Save JSON/CSV output
+# - Generate marked PDF report
 # - Show scrollable analysis summary
 # - Open results.json directly after analysis
 # - Open results.csv directly after analysis
+# - Open marked PDF report directly after analysis
 # - Resizable/dynamic window layout
 # ==========================================================
+
+from __future__ import annotations
 
 import os
 import threading
 import tkinter as tk
 
 from tkinter import filedialog, messagebox
+
 from analysis_pipeline import analyze_pdf
+from config import OUTPUT_CSV, OUTPUT_JSON, OUTPUT_MARKED_PDF
+from pdf_colored_report import create_colored_pdf_report
 
 
 APP_TITLE = "LeakShield - Sensitive Information Leakage Detection"
-OUTPUT_JSON = "output/results.json"
-OUTPUT_CSV = "output/results.csv"
 
 
 class LeakShieldGUI:
     def __init__(self, root):
         self.root = root
         self.root.title(APP_TITLE)
-        self.root.geometry("900x620")
-        self.root.minsize(760, 520)
+        self.root.geometry("980x650")
+        self.root.minsize(820, 540)
         self.root.resizable(True, True)
 
         self.selected_pdf_path = tk.StringVar(value="No PDF selected")
@@ -79,7 +84,7 @@ class LeakShieldGUI:
             textvariable=self.selected_pdf_path,
             anchor="w",
             justify="left",
-            wraplength=820,
+            wraplength=900,
             font=("Segoe UI", 10),
         )
         selected_file_label.grid(row=0, column=0, sticky="ew", pady=(0, 12))
@@ -123,7 +128,17 @@ class LeakShieldGUI:
             command=self.open_csv_results,
             state="disabled",
         )
-        self.open_csv_button.pack(side="left")
+        self.open_csv_button.pack(side="left", padx=(0, 12))
+
+        self.open_marked_pdf_button = tk.Button(
+            actions_frame,
+            text="Open Marked PDF",
+            width=18,
+            height=2,
+            command=self.open_marked_pdf_report,
+            state="disabled",
+        )
+        self.open_marked_pdf_button.pack(side="left")
 
         summary_frame = tk.LabelFrame(
             main_frame,
@@ -179,7 +194,7 @@ class LeakShieldGUI:
 
         footer_label = tk.Label(
             main_frame,
-            text="After analysis, you can open the generated JSON and CSV result files directly.",
+            text="After analysis, you can open the generated JSON, CSV, and marked PDF result files directly.",
             font=("Segoe UI", 9),
             fg="#777777",
         )
@@ -207,6 +222,7 @@ class LeakShieldGUI:
 
         self.open_json_button.config(state="disabled")
         self.open_csv_button.config(state="disabled")
+        self.open_marked_pdf_button.config(state="disabled")
 
     def start_analysis(self):
         pdf_path = self.selected_pdf_path.get()
@@ -226,6 +242,7 @@ class LeakShieldGUI:
         self.analyze_button.config(state="disabled")
         self.open_json_button.config(state="disabled")
         self.open_csv_button.config(state="disabled")
+        self.open_marked_pdf_button.config(state="disabled")
 
         self.status_text.set("Processing PDF... This may take a moment.")
         self.set_summary_text("Analyzing document. Please wait...")
@@ -245,13 +262,31 @@ class LeakShieldGUI:
                 output_csv=OUTPUT_CSV,
             )
 
-            self.root.after(0, lambda: self.on_analysis_success(summary))
+            marked_pdf_summary = create_colored_pdf_report(
+                input_pdf_path=pdf_path,
+                results_json_path=OUTPUT_JSON,
+                output_pdf_path=OUTPUT_MARKED_PDF,
+            )
+
+            self.root.after(
+                0,
+                lambda: self.on_analysis_success(summary, marked_pdf_summary),
+            )
 
         except Exception as error:
             self.root.after(0, lambda: self.on_analysis_error(error))
 
-    def on_analysis_success(self, summary):
+    def on_analysis_success(self, summary, marked_pdf_summary=None):
         self.status_text.set("Analysis completed successfully.")
+
+        marked_pdf_text = ""
+
+        if marked_pdf_summary:
+            marked_pdf_text = (
+                f"\n\nMarked PDF output:\n{OUTPUT_MARKED_PDF}\n"
+                f"Marked leak spans: {marked_pdf_summary.get('marked_count')}\n"
+                f"Unmarked leak texts: {marked_pdf_summary.get('not_found_count')}"
+            )
 
         self.set_summary_text(
             "Analysis completed successfully.\n\n"
@@ -261,15 +296,21 @@ class LeakShieldGUI:
             f"Detected leaks: {summary['total_leaks']}\n\n"
             f"JSON output:\n{summary['output_json']}\n\n"
             f"CSV output:\n{summary['output_csv']}"
+            f"{marked_pdf_text}"
         )
 
         self.analyze_button.config(state="normal")
         self.open_json_button.config(state="normal")
         self.open_csv_button.config(state="normal")
 
+        if os.path.exists(os.path.abspath(OUTPUT_MARKED_PDF)):
+            self.open_marked_pdf_button.config(state="normal")
+        else:
+            self.open_marked_pdf_button.config(state="disabled")
+
         messagebox.showinfo(
             "Analysis completed",
-            "PDF analysis completed successfully.\nYou can now open the JSON or CSV result files.",
+            "PDF analysis completed successfully.\nYou can now open the JSON, CSV, or marked PDF result files.",
         )
 
     def on_analysis_error(self, error):
@@ -279,6 +320,7 @@ class LeakShieldGUI:
         self.analyze_button.config(state="normal")
         self.open_json_button.config(state="disabled")
         self.open_csv_button.config(state="disabled")
+        self.open_marked_pdf_button.config(state="disabled")
 
         messagebox.showerror(
             "Analysis failed",
@@ -308,6 +350,18 @@ class LeakShieldGUI:
             return
 
         os.startfile(csv_path)
+
+    def open_marked_pdf_report(self):
+        marked_pdf_path = os.path.abspath(OUTPUT_MARKED_PDF)
+
+        if not os.path.exists(marked_pdf_path):
+            messagebox.showwarning(
+                "File not found",
+                "marked_leaks_report.pdf was not found. Please run analysis first.",
+            )
+            return
+
+        os.startfile(marked_pdf_path)
 
 
 def main():
