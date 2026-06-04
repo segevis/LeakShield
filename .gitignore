@@ -53,3 +53,4 @@ __pycache__/
 output/marked_leaks_report.pdf
 output/results.json
 output/results.csv
+gui_current_for_button.txt
