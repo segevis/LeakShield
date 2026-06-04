@@ -53,3 +53,4 @@ ACTIVE_SVM_MODEL_NAME = "svm_final"
 
 OUTPUT_JSON = "output/results.json"
 OUTPUT_CSV = "output/results.csv"
+OUTPUT_MARKED_PDF = "output/marked_leaks_report.pdf"

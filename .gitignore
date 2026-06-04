@@ -41,3 +41,15 @@ final_project_clean_current_for_review.zip
 # Local archives
 archive_hebert_old_model_*/
 archive_after_hebert_3epochs_cleanup_*/
+
+# Local GUI/update archives
+archive_after_gui_marked_pdf_update_*/
+*backup*.py
+final_project_clean_code_for_review.zip
+final_project_clean_current_for_review.zip
+review_clean_code_package_temp/
+__pycache__/
+*.pyc
+output/marked_leaks_report.pdf
+output/results.json
+output/results.csv
