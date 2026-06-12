@@ -1,0 +1,58 @@
+﻿{
+    "model_name":  "hebert_multitask_v2",
+    "status":  "production_run002_threshold_031",
+    "model_path":  "models\\hebert_multitask_v2\\best",
+    "architecture":  {
+                         "shared_encoder":  "HeBERT",
+                         "heads":  [
+                                       "token_classification",
+                                       "sequence_classification"
+                                   ],
+                         "max_length":  192
+                     },
+    "sequence_calibration":  {
+                                 "temperature":  2.8146126944056307,
+                                 "threshold":  0.31,
+                                 "selection_dataset":  "output/run002_threshold_sweep.csv and corrected Sony evaluation",
+                                 "selection_rule":  "Selected threshold 0.31 because run_002 improved accuracy, precision, recall, specificity and F1 over the previous active Production model on the frozen pipeline-aware test."
+                             },
+    "token_head":  {
+                       "uses_argmax":  true,
+                       "outside_label":  "O",
+                       "label_schema":  "data/hebert_label_schema.json"
+                   },
+    "evaluation_reference":  {
+                                 "fresh_blind_a":  {
+                                                       "sequence_f1":  0.9646302250803859,
+                                                       "sequence_recall":  1.0,
+                                                       "sequence_specificity":  0.9266666666666666,
+                                                       "sequence_precision":  0.9316770186335404,
+                                                       "sequence_fp":  11,
+                                                       "sequence_fn":  0,
+                                                       "token_f1":  0.8393,
+                                                       "token_recall":  0.8767,
+                                                       "token_precision":  0.805
+                                                   }
+                             },
+    "integrity":  {
+                      "model_safetensors_sha256":  "d6f04854b8e59eaa103cc684e5665eddf9a0ee0fbff685a88e8fcfd155c16421",
+                      "config_json_sha256":  "9afac8016d5456bfde44e2b2afc401a0a1a058a7f6884469a4f3dfdde1eacb61",
+                      "tokenizer_json_sha256":  "acfc2dd1f358b9a70576a4a0b947d2ae3661def8b615844f3a319268adec9f10"
+                  },
+    "locked_at_utc":  "2026-06-08T14:04:49.764652+00:00",
+    "important":  [
+                      "Do not change the threshold using Fresh Blind A.",
+                      "Use threshold 0.13 unchanged for the final untouched Blind B.",
+                      "Use models/hebert_multitask_v2/best, not final."
+                  ],
+    "deployment":  {
+                       "deployed_at":  "2026-06-11T23:59:16.7989730+03:00",
+                       "source_model":  "models/hebert_multitask_v2_sony_demo/run_002/best",
+                       "source_model_sha256":  "d6f04854b8e59eaa103cc684e5665eddf9a0ee0fbff685a88e8fcfd155c16421",
+                       "sequence_threshold":  0.31,
+                       "sequence_temperature":  2.8146126944056307,
+                       "token_threshold":  0.55,
+                       "previous_production_sha256":  "ea7f305af6517a4102786d671ead4fc85aee75a628a4675fb2041acbd42235ec",
+                       "backup_directory":  "C:\\Users\\segev\\Desktop\\final_project\\archive\\production_before_run002_031_exact_20260611_235911"
+                   }
+}
