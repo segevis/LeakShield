@@ -1,96 +1,168 @@
 # LeakShield
 
-LeakShield is a Python-based system for detecting sensitive information leakage in Hebrew PDF documents.
+LeakShield is a Python-based academic prototype for detecting sensitive-information leakage in Hebrew PDF documents.
 
-The system analyzes PDF files, extracts text, detects sensitive information using Regex, Hebrew NER, and a trained machine learning classifier, and exports the results to JSON and CSV files.
+The system extracts and normalizes text from PDF files, divides the text into generic structural units, detects structured patterns with Regex, analyzes context with a fine-tuned HeBERT Multi-Task model, and produces JSON, CSV, and marked PDF reports.
 
 ---
 
-# How to Run the Project
+## Main Capabilities
 
-## 1. Open Terminal in the Project Folder
+- Hebrew PDF text extraction
+- Text cleaning and normalization
+- Generic dynamic segmentation based on document structure
+- Regex detection for structured sensitive patterns
+- HeBERT Multi-Task V2 semantic analysis
+- Sequence-level `LEAK` / `NON_LEAK` classification
+- Token-level sensitive-span detection
+- Decision engine for combining detection evidence
+- JSON and CSV result export
+- Marked PDF report generation
+- Desktop GUI
+- Automated runtime, model, training, and integration tests
 
-Open PowerShell inside the project root folder:
+---
 
-```powershell
-cd C:\Users\segev\Desktop\final_project
-```
-
-Make sure you are inside the project folder:
-
-```powershell
-dir
-```
-
-You should see files such as:
+# System Architecture
 
 ```text
-main.py
-gui.py
-requirements.txt
-config.py
-training
-models
-data
-input
-output
+PDF document
+    ↓
+Text extraction
+    ↓
+Cleaning and normalization
+    ↓
+Dynamic structural segmentation
+    ↓
+Regex detection
+    ↓
+HeBERT Multi-Task V2
+    ├── Sequence classification head
+    └── Token classification head
+    ↓
+Decision engine
+    ↓
+JSON report + CSV report + marked PDF report
+```
+
+## Dynamic Text Segmentation
+
+The segmentation mechanism is generic and does not contain document-specific headings, labels, company names, or sentences.
+
+It uses structural signals such as:
+
+- Blank lines and paragraph boundaries
+- Natural line breaks
+- Sentence-ending punctuation
+- Bullets and numbered items
+- Generic `label: value` structures
+- Document-relative line statistics
+- The active tokenizer limit when required
+
+## HeBERT Multi-Task V2
+
+The production model is based on a pretrained Hebrew HeBERT encoder that was fine-tuned for sensitive-information leakage detection.
+
+The model contains two heads that share the same encoder:
+
+- **Sequence classification head:** classifies the complete text unit as `LEAK` or `NON_LEAK`.
+- **Token classification head:** identifies sensitive words or spans inside the text unit.
+
+The sequence head produces `probability_leak`. The final prediction is determined by comparing this probability with the configured production threshold.
+
+## Decision Engine
+
+The decision engine combines:
+
+- Regex evidence
+- HeBERT sequence classification
+- HeBERT token classification
+
+It produces the final label and risk information for each analyzed text unit.
+
+---
+
+# Active Production Model
+
+Production model directory:
+
+```text
+models/hebert_multitask_v2/best
+```
+
+Main model file:
+
+```text
+models/hebert_multitask_v2/best/model.safetensors
+```
+
+Expected SHA-256:
+
+```text
+A983C3230D983F990B7B801DB60AC8F20A1C623E6105F6907AC743ED22935CA1
+```
+
+The model file is stored in GitHub using Git LFS.
+
+Production configuration:
+
+```text
+config/hebert_multitask_v2_production.json
+```
+
+Active sequence threshold:
+
+```text
+0.169112
 ```
 
 ---
 
-## 2. Create a Virtual Environment
+# Requirements
 
-Run:
+- Windows 10 or Windows 11
+- Python 3.13
+- Git
+- Git LFS
+- Internet connection for the first dependency installation
+
+---
+
+# Download from GitHub
+
+```powershell
+git lfs install
+git clone --branch runnable-production-package https://github.com/segevis/LeakShield.git
+cd LeakShield
+git lfs pull
+```
+
+Verify the model was downloaded:
+
+```powershell
+Get-Item .\models\hebert_multitask_v2\best\model.safetensors
+```
+
+The model size should be approximately 436 MB.
+
+---
+
+# First-Time Setup
 
 ```powershell
 python -m venv .venv
-```
-
----
-
-## 3. Activate the Virtual Environment
-
-Run:
-
-```powershell
 .\.venv\Scripts\Activate.ps1
-```
-
-After activation, the terminal should show:
-
-```text
-(.venv)
-```
-
-Example:
-
-```text
-(.venv) PS C:\Users\segev\Desktop\final_project>
-```
-
----
-
-## 4. Install Required Libraries
-
-Run:
-
-```powershell
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-This installs all required Python libraries for the project.
-
----
-
-## If PowerShell Blocks Activation
-
-If you get an execution policy error, run this command once:
+If PowerShell blocks activation:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-Then activate the virtual environment again:
+Then activate again:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
@@ -100,16 +172,9 @@ Then activate the virtual environment again:
 
 # Run the System
 
-There are two ways to run the system:
+## Graphical Interface
 
-1. Run with GUI
-2. Run from command line
-
----
-
-## Option 1: Run with GUI
-
-This is the recommended way to run and demonstrate the system.
+Recommended for demonstrations:
 
 ```powershell
 python gui.py
@@ -117,261 +182,259 @@ python gui.py
 
 Then:
 
-1. Click `Choose PDF`
-2. Select a PDF file
-3. Click `Analyze PDF`
-4. Wait until the analysis is completed
-5. Open the generated `results.json` or `results.csv` directly from the GUI
+1. Click **Choose PDF**
+2. Select a PDF
+3. Click **Analyze PDF**
+4. Wait for analysis to finish
+5. Open the marked PDF, JSON, or CSV report
 
----
+During analysis, the PDF-selection button is locked.
 
-## Option 2: Run from Command Line
-
-Run:
+## Command Line
 
 ```powershell
 python main.py
 ```
 
-This analyzes the default PDF configured in:
+Default paths are configured in:
 
 ```text
 config.py
-```
-
-The default input PDF path is controlled by:
-
-```python
-PDF_PATH
-```
-
-The output files are controlled by:
-
-```python
-OUTPUT_JSON
-OUTPUT_CSV
-```
-
----
-
-# Quick Copy-Paste Commands
-
-## First-Time Setup
-
-Copy and run:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-## Run GUI
-
-```powershell
-python gui.py
-```
-
-## Run Command-Line Version
-
-```powershell
-python main.py
 ```
 
 ---
 
 # Output Files
 
-After running the analysis, the system creates:
-
 ```text
 output/results.json
 output/results.csv
+output/marked_leaks_report.pdf
 ```
 
 ## `results.json`
 
-Detailed structured output that includes:
+Contains detailed structured information such as:
 
-* Page number
-* Sentence / text unit
-* Regex detections
-* HeBERT NER detections
-* ML classification
-* Confidence score
+- Page number
+- Text unit
+- Final classification
+- Risk information
+- Regex detections
+- Sequence-classification result
+- Token-level detections
+- Leakage probability
+- Confidence
+- Analysis status
 
 ## `results.csv`
 
-Table-friendly output that includes:
+Provides a table-friendly representation of the analysis results.
 
-* Page number
-* Sentence
-* Classification label
-* Confidence
-* Regex types
-* Regex values
+## `marked_leaks_report.pdf`
+
+Visually highlights detected sensitive content in the original document.
 
 ---
 
 # Project Structure
 
 ```text
-final_project/
+LeakShield/
 ├── main.py
 ├── gui.py
 ├── analysis_pipeline.py
-├── config.py
-├── pdf_processor.py
-├── utils.py
+├── decision_engine.py
 ├── detectors.py
-├── ml_classifier.py
+├── hebert_multitask_detector.py
+├── sensitive_text_analyzer.py
+├── pdf_processor.py
+├── pdf_colored_report.py
+├── utils.py
+├── config.py
 ├── requirements.txt
+├── README.md
+├── config/
+│   └── hebert_multitask_v2_production.json
 ├── data/
+│   └── hebert_label_schema.json
 ├── input/
 ├── models/
+│   └── hebert_multitask_v2/
+│       └── best/
+│           ├── model.safetensors
+│           ├── config.json
+│           ├── tokenizer.json
+│           └── tokenizer_config.json
 ├── output/
+├── tests/
 └── training/
 ```
 
-| File / Folder          | Description                                              |
-| ---------------------- | -------------------------------------------------------- |
-| `gui.py`               | Desktop GUI for selecting and analyzing PDF files        |
-| `main.py`              | Command-line entry point                                 |
-| `analysis_pipeline.py` | Main reusable analysis pipeline                          |
-| `config.py`            | Paths for input, output, model and vectorizer            |
-| `pdf_processor.py`     | PDF text extraction                                      |
-| `utils.py`             | Text normalization and segmentation                      |
-| `detectors.py`         | Regex and HeBERT NER detection                           |
-| `ml_classifier.py`     | Loads the trained classifier and performs classification |
-| `training/`            | Training and evaluation scripts                          |
-| `data/`                | Training datasets                                        |
-| `models/`              | Saved trained models and vectorizers                     |
-| `output/`              | Generated result files                                   |
-
----
-
-# Final Selected Model
-
-The final model used by the system is:
-
-```text
-19k augmented dataset + TF-IDF + Linear SVM
-```
-
-Model files:
-
-```text
-models/comparison_svm_19000.pkl
-models/comparison_tfidf_svm_19000.pkl
-```
-
-These paths are configured in:
-
-```text
-config.py
-```
+| File / Folder | Description |
+|---|---|
+| `main.py` | Command-line entry point |
+| `gui.py` | Desktop interface |
+| `analysis_pipeline.py` | End-to-end analysis pipeline |
+| `decision_engine.py` | Combines Regex, sequence, and token evidence |
+| `detectors.py` | Structured Regex detection |
+| `hebert_multitask_detector.py` | Loads the tokenizer and production model |
+| `sensitive_text_analyzer.py` | Public sensitive-text analysis interface |
+| `pdf_processor.py` | PDF text extraction |
+| `pdf_colored_report.py` | Marked PDF report generation |
+| `utils.py` | Text normalization and generic dynamic segmentation |
+| `config.py` | Runtime paths and outputs |
+| `config/` | Production model configuration |
+| `data/` | Label schema and model-related data |
+| `models/` | Production and saved model artifacts |
+| `training/` | Dataset, training, evaluation, calibration, and audit scripts |
+| `tests/` | Unit, integration, runtime, dataset, report, and model tests |
+| `input/` | Input and controlled demonstration PDFs |
+| `output/` | Generated results |
 
 ---
 
 # Training and Evaluation
 
-All training commands should be executed from the project root folder.
+Run commands from the project root with the virtual environment activated.
 
-## Train Original Logistic Regression Model
-
-```powershell
-python training\train_model.py
-```
-
-## Run Stratified K-Fold Evaluation
+## Build Dataset
 
 ```powershell
-python training\train_model_stratified_kfold.py
+python training\build_hebert_multitask_dataset.py
 ```
 
-## Run Grouped Split Evaluation
+## Audit Dataset
 
 ```powershell
-python training\train_model_grouped_split.py
+python training\audit_multitask_datasets.py
 ```
 
-## Run GroupKFold on 18k Dataset
+## Analyze Dataset Leakage Risk
 
 ```powershell
-python training\train_model_group_kfold.py
+python training\analyze_multitask_leakage.py
 ```
 
-## Train and Evaluate SVM on 18k Dataset
+## Train HeBERT Multi-Task
 
 ```powershell
-python training\train_model_svm_group_kfold.py
+python training\train_hebert_multitask.py
 ```
 
-## Train and Evaluate Logistic Regression on 19k Dataset
+Updated V2 training:
 
 ```powershell
-python training\train_model_group_kfold_19000.py
+python training\train_hebert_multitask_v2.py
 ```
 
-## Train and Evaluate SVM on 19k Dataset
+## Evaluate and Calibrate
 
 ```powershell
-python training\train_model_svm_group_kfold_19000.py
+python training\evaluate_and_calibrate_hebert_multitask.py
 ```
 
-## Run Full Model Comparison
+Exact command-line arguments depend on the dataset and output paths. Review each script's argument parser before running a new experiment.
+
+---
+
+# Tests
+
+## Production Runtime Tests
 
 ```powershell
-python training\run_all_model_comparisons.py
+python -m pytest tests\test_sensitive_text_analyzer.py tests\test_production_regex_hebert_contract.py -q
 ```
 
-This creates:
+Expected current result:
 
 ```text
-output/model_comparison_summary.csv
-output/model_comparison_folds.csv
+9 passed
 ```
 
----
-
-# Full Training / Evaluation Block
-
-To run the main evaluation scripts one after another, copy this block:
+## Full Test Suite
 
 ```powershell
-python training\train_model.py
-python training\train_model_stratified_kfold.py
-python training\train_model_grouped_split.py
-python training\train_model_group_kfold.py
-python training\train_model_svm_group_kfold.py
-python training\train_model_group_kfold_19000.py
-python training\train_model_svm_group_kfold_19000.py
-python training\run_all_model_comparisons.py
+python -m pytest tests -q
 ```
+
+The suite includes tests for:
+
+- Analysis pipeline
+- Dataset construction
+- Decision engine
+- Evaluation and calibration
+- Multi-task model
+- Dataset auditing
+- Data-leakage analysis
+- Runtime integration
+- Marked PDF report
+- Regex and HeBERT production contract
+- Sensitive-text analysis
+- Training scripts
 
 ---
 
-# Final Model Comparison
+# Verify the Production Model
 
-| Experiment                 | Dataset       | Model               | Accuracy | Precision | Recall |     F1 |
-| -------------------------- | ------------- | ------------------- | -------: | --------: | -----: | -----: |
-| `svm_19000_augmented`      | 19k augmented | SVM                 |   0.9868 |    0.9788 | 1.0000 | 0.9888 |
-| `logistic_19000_augmented` | 19k augmented | Logistic Regression |   0.9819 |    0.9788 | 0.9908 | 0.9841 |
-| `svm_18000`                | 18k combined  | SVM                 |   0.9583 |    0.9551 | 0.9760 | 0.9634 |
-| `logistic_18000`           | 18k combined  | Logistic Regression |   0.9532 |    0.9542 | 0.9672 | 0.9590 |
+```powershell
+Get-FileHash `
+    .\models\hebert_multitask_v2\best\model.safetensors `
+    -Algorithm SHA256
+```
 
-The selected final model is:
+Expected:
 
 ```text
-svm_19000_augmented
+A983C3230D983F990B7B801DB60AC8F20A1C623E6105F6907AC743ED22935CA1
 ```
 
 ---
 
-# Notes
+# Controlled Demonstration Scenarios
 
-* The system is a local academic prototype.
-* The datasets are synthetic / semi-synthetic.
-* Raw PDF text logging is disabled by default to avoid exposing sensitive content.
-* The GUI is intended for local demonstration and testing.
-* Scanned image-based PDFs are not currently supported unless text can be extracted from them.
+The project contains two controlled demonstration scenarios:
+
+## Sensitive Business Document
+
+Demonstrates positive leak detection and marked-PDF generation.
+
+## Public Corporate Document
+
+Demonstrates a valid public document with zero detected leaks.
+
+These are controlled demonstration scenarios, not an independent blind benchmark.
+
+---
+
+# Important Notes and Limitations
+
+- LeakShield is an academic engineering and research prototype.
+- The model was fine-tuned from a pretrained Hebrew HeBERT model; it was not trained from zero.
+- Much of the available labeled data was synthetic or constructed.
+- Additional real Hebrew documents and expert human labeling are required before commercial deployment.
+- False positives and false negatives can still occur on unseen domains and document structures.
+- Performance depends on the quality of text extraction from the PDF.
+- Scanned image-only PDFs require OCR before analysis.
+- Raw extracted PDF text is not printed by default.
+- The system currently runs locally.
+
+---
+
+# Academic Positioning
+
+LeakShield demonstrates the technical feasibility of an end-to-end Hebrew PDF sensitive-information leakage detection system.
+
+Its main contribution is the integration of:
+
+- PDF processing
+- Generic dynamic segmentation
+- Structured Regex detection
+- Fine-tuned Hebrew Transformer analysis
+- Multi-task sequence and token classification
+- Decision logic
+- Visual and structured reporting
+- GUI-based operation
+- Automated validation
+
+The main requirement for future production deployment is broader real-world labeled data and independent external evaluation.
