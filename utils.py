@@ -1,599 +1,534 @@
-
-# ==========================================================
-# Text Processing Utilities Module - segmentation V3
+﻿# ==========================================================
+# Text Processing Utilities - generic structural segmentation
+# ----------------------------------------------------------
+# Segmentation is based only on document structure:
+# - blank lines and paragraph boundaries
+# - real line breaks
+# - sentence-ending punctuation
+# - bullets and numbered items
+# - generic "label: value" structure
+# - document-relative line statistics
+#
+# No document-specific headings, labels, company names,
+# sentences, or keywords are hard-coded in this module.
 # ==========================================================
 
 from __future__ import annotations
 
 import re
-from typing import Dict, List, Tuple
+import statistics
+from typing import Any, Callable, Dict, Iterable, List, Sequence
 
 
-BOUNDARY = "\n<SPLIT_BOUNDARY>\n"
-MAX_UNIT_CHARS = 260
-TARGET_UNIT_CHARS = 180
-MIN_UNIT_CHARS = 4
-MIN_NATURAL_CHUNK_CHARS = 35
-
-_METADATA_RE = re.compile(
+_TERMINAL_PUNCTUATION_RE = re.compile(r"[.!?؟…][\"')\]}\u05F4\u05F3]*$")
+_LIST_ITEM_RE = re.compile(
     r"^(?:"
-    r"נושא|תאריך|סיווג|מיועד\s+עבור|עבור|אל|מאת|עותק|גרסה|מחבר|"
-    r"subject|date|classification|to|from|cc|version|author"
-    r")\s*[:：]",
-    re.IGNORECASE,
+    r"[\u2022•●▪▫◦‣⁃]\s+"
+    r"|(?:\d+|[A-Za-z]|[א-ת])\s*[\.\)]\s+"
+    r")"
+)
+_ONLY_MARKS_RE = re.compile(r"^[\W_]+$", re.UNICODE)
+_SENTENCE_BOUNDARY_RE = re.compile(
+    r"(?<=[.!?؟…])"
+    r"(?=[\"')\]}\u05F4\u05F3]*\s+[^\s])"
 )
 
-_COMMON_HEADING_WORDS = {
-    "תקציר", "תקציר מנהלים", "סיכום", "מבוא", "רקע", "מטרה", "מטרות",
-    "עלויות פיתוח", "הכנסות", "הכנסות ממוצרים מרכזיים",
-    "תלות עסקית ואסטרטגית", "הערכת סיכונים", "סיכונים",
-    "כיווני פעילות עתידיים", "הנחיות אבטחת מידע",
-    "מסקנות", "המלצות", "נספח", "נספחים",
-    "executive summary", "summary", "introduction", "background",
-    "conclusions", "recommendations", "security guidelines",
-}
 
-_SENTENCE_START_RE = re.compile(r"[א-תA-Z0-9]")
-_END_PUNCT_RE = re.compile(r"[.!?؟]$")
-_ONLY_MARKERS_RE = re.compile(r"[\d\s\.\)\-_:]+")
-_NUMBERED_ITEM_RE = re.compile(r"^\d{1,3}\s*[\.\)]")
-_HEBREW_ITEM_RE = re.compile(r"^[א-ת]\s*[\.\)]\s+")
-
-
-def normalize_text(text):
-    """Normalize extraction artifacts while preserving paragraph structure."""
+def normalize_text(text: Any) -> str:
+    """Normalize extraction artifacts while preserving document structure."""
     if text is None:
         return ""
 
-    text = str(text)
-    text = text.replace("\r\n", "\n").replace("\r", "\n")
-    text = text.replace("\u00a0", " ")
+    value = str(text)
+    value = value.replace("\r\n", "\n").replace("\r", "\n")
+    value = value.replace("\u00a0", " ")
 
-    text = (
-        text.replace("״", '"')
-        .replace("“", '"')
-        .replace("”", '"')
-        .replace("’", "'")
-        .replace("׳", "'")
-        .replace("–", "-")
-        .replace("—", "-")
-        .replace("\u200f", "")
-        .replace("\u200e", "")
-        .replace("\ufeff", "")
-    )
+    translations = {
+        "״": '"',
+        "“": '"',
+        "”": '"',
+        "’": "'",
+        "׳": "'",
+        "–": "-",
+        "—": "-",
+        "\u200f": "",
+        "\u200e": "",
+        "\ufeff": "",
+        "\u202a": "",
+        "\u202b": "",
+        "\u202c": "",
+    }
+    for source, target in translations.items():
+        value = value.replace(source, target)
 
-    # Normalize each line but keep newlines for structural parsing.
-    text = "\n".join(
-        re.sub(r"[ \t]+", " ", line).strip()
-        for line in text.split("\n")
-    )
+    normalized_lines = []
+    for raw_line in value.split("\n"):
+        line = re.sub(r"[ \t]+", " ", raw_line).strip()
+        normalized_lines.append(line)
 
-    # Repair common joins created by PDF extraction.
-    text = re.sub(r"([א-ת])(\d{4,})", r"\1 \2", text)
-    text = re.sub(r"(\d{4,})([א-ת])", r"\1 \2", text)
-    text = re.sub(r"([א-ת])([A-Za-z_]{2,})", r"\1 \2", text)
-    text = re.sub(r"([A-Za-z_]{2,})([א-ת])", r"\1 \2", text)
+    value = "\n".join(normalized_lines)
 
-    # Repair missing whitespace after terminal punctuation:
-    # "PlayStation.הערכת" -> "PlayStation. הערכת"
-    text = re.sub(r"([.!?؟])(?=[א-תA-Z])", r"\1 ", text)
+    # Repair common PDF extraction joins without changing semantics.
+    value = re.sub(r"([א-ת])(\d)", r"\1 \2", value)
+    value = re.sub(r"(\d)([א-ת])", r"\1 \2", value)
+    value = re.sub(r"([א-ת])([A-Za-z])", r"\1 \2", value)
+    value = re.sub(r"([A-Za-z])([א-ת])", r"\1 \2", value)
 
-    # Normalize punctuation spacing without modifying decimal points.
-    text = re.sub(r"\s+([.!?؟,;])", r"\1", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
+    # Preserve paragraph structure but collapse excessive blank lines.
+    value = re.sub(r"\n{3,}", "\n\n", value)
 
-    return text.strip()
+    # Normalize punctuation spacing.
+    value = re.sub(r"\s+([,;.!?؟])", r"\1", value)
+
+    return value.strip()
 
 
-def _protect_special_patterns(text):
-    """Protect dots / slashes / colons that are not sentence boundaries."""
+def _protect_inline_patterns(text: str) -> tuple[str, Dict[str, str]]:
+    """
+    Protect inline patterns whose punctuation is not a structural boundary.
+
+    The rules describe generic syntax only; they do not contain
+    document-specific words or labels.
+    """
     protected: Dict[str, str] = {}
-    counter = 0
 
-    patterns = [
+    patterns = (
         r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",
-        r"\bhttps?://[^\s]+",
+        r"\b(?:https?|ftp)://[^\s]+",
         r"\bwww\.[^\s]+",
-        r"\b\d{1,2}[/.]\d{1,2}[/.]\d{2,4}\b",
-        r"\b\d{1,2}:\d{2}\b",
-        r"\b\d+\.\d+\b",
-        r"\b[\w\-]+\.(?:pdf|docx|doc|xlsx|csv|json|txt|py|js|ts|env|zip)\b",
-        r"\b(?:Mr|Mrs|Ms|Dr|Prof|Inc|Ltd|No)\.",
-    ]
+        r"\b\d{1,2}:\d{2}(?::\d{2})?\b",
+        r"\b\d{1,4}[/.]\d{1,2}[/.]\d{1,4}\b",
+        r"\b\d+(?:[.,]\d+)+\b",
+        r"\b(?:[A-Za-z0-9_-]+\.)+[A-Za-z]{2,}\b",
+        r"\b[A-Za-z]:\\(?:[^\\\s]+\\)*[^\\\s]*",
+    )
 
-    def replace_match(match):
-        nonlocal counter
-        key = f"<PROTECTED_{counter}>"
+    def replace(match: re.Match[str]) -> str:
+        key = f"\uFFF0{len(protected)}\uFFF1"
         protected[key] = match.group(0)
-        counter += 1
         return key
 
+    result = text
     for pattern in patterns:
-        text = re.sub(pattern, replace_match, text, flags=re.IGNORECASE)
+        result = re.sub(pattern, replace, result, flags=re.IGNORECASE)
 
-    return text, protected
+    return result, protected
 
 
-def _restore_special_patterns(text, protected):
+def _restore_inline_patterns(text: str, protected: Dict[str, str]) -> str:
     for key, value in protected.items():
         text = text.replace(key, value)
     return text
 
 
-def _is_metadata_line(line):
-    return bool(_METADATA_RE.match(str(line).strip()))
+def _non_empty_lines(text: str) -> List[str]:
+    return [line.strip() for line in text.split("\n") if line.strip()]
 
 
-def _looks_like_heading_line(line):
+def _document_line_statistics(lines: Sequence[str]) -> Dict[str, float]:
     """
-    Detect a heading only at a structural paragraph boundary.
+    Calculate document-relative statistics.
 
-    Unlike the previous splitter, this function is not run on arbitrary
-    wrapped lines in the middle of paragraphs.
+    No fixed heading names or fixed character limits are used.
     """
-    line = str(line).strip()
-    if not line or _is_metadata_line(line):
-        return False
+    lengths = [len(line) for line in lines if line]
+    word_counts = [len(line.split()) for line in lines if line]
 
-    normalized = line.rstrip(":").strip()
-    lowered = normalized.lower()
+    if not lengths:
+        return {
+            "median_length": 0.0,
+            "lower_length": 0.0,
+            "median_words": 0.0,
+        }
 
-    if lowered in _COMMON_HEADING_WORDS:
-        return True
+    sorted_lengths = sorted(lengths)
+    lower_half = sorted_lengths[: max(1, len(sorted_lengths) // 2)]
 
-    if line.endswith(":") and len(line) <= 80 and len(line.split()) <= 8:
-        return True
-
-    if _END_PUNCT_RE.search(line):
-        return False
-
-    words = line.split()
-    if not 1 <= len(words) <= 6:
-        return False
-    if len(line) > 60 or re.search(r"\d", line):
-        return False
-
-    # A title-like phrase should not contain clause punctuation.
-    return line.count(",") == 0 and line.count(";") == 0
+    return {
+        "median_length": float(statistics.median(lengths)),
+        "lower_length": float(statistics.median(lower_half)),
+        "median_words": float(statistics.median(word_counts)),
+    }
 
 
-def _raw_paragraphs(text):
-    """Return paragraphs separated by real blank lines."""
-    paragraphs = []
-    current = []
-
-    for line in text.split("\n"):
-        stripped = line.strip()
-        if stripped:
-            current.append(stripped)
-        elif current:
-            paragraphs.append(current)
-            current = []
-
-    if current:
-        paragraphs.append(current)
-
-    return paragraphs
-
-
-def _join_wrapped_lines_naturally(lines):
+def _find_structural_colon(line: str) -> int | None:
     """
-    Join PDF-wrapped lines, while preserving meaningful line boundaries.
+    Find a generic label/value colon while ignoring protected syntax.
 
-    A newline is considered meaningful when:
-    - the previous line ends with terminal punctuation, semicolon or colon;
-    - the next line is a heading, metadata field or list item;
-    - the current line itself is a heading or metadata field.
+    Examples of the supported structure:
+        Label: value
+        תווית: ערך
 
-    Ordinary visual wrapping inside a sentence is joined with a space.
+    The function does not know or list any label names.
+    """
+    protected_line, _ = _protect_inline_patterns(line)
+
+    for index, character in enumerate(protected_line):
+        if character not in {":", "："}:
+            continue
+
+        left = protected_line[:index].strip()
+        right = protected_line[index + 1 :].strip()
+
+        if not left or not right:
+            continue
+        if _TERMINAL_PUNCTUATION_RE.search(left):
+            continue
+        if "\n" in left or "\n" in right:
+            continue
+
+        # A label is structurally the prefix of the line rather than
+        # a complete clause containing multiple punctuation boundaries.
+        if any(mark in left for mark in (";", "?", "!", "؟")):
+            continue
+
+        return index
+
+    return None
+
+
+def _is_label_value_line(line: str) -> bool:
+    return _find_structural_colon(str(line).strip()) is not None
+
+
+def _is_list_item(line: str) -> bool:
+    return bool(_LIST_ITEM_RE.match(str(line).strip()))
+
+
+def _ends_sentence(line: str) -> bool:
+    return bool(_TERMINAL_PUNCTUATION_RE.search(str(line).strip()))
+
+
+def _looks_like_structural_heading(
+    line: str,
+    *,
+    previous_line: str | None,
+    next_line: str | None,
+    previous_was_blank: bool,
+    next_is_blank: bool,
+    statistics_data: Dict[str, float],
+) -> bool:
+    """
+    Infer a heading from layout and document-relative statistics only.
+
+    No heading vocabulary is used.
+    """
+    candidate = str(line).strip()
+    if not candidate:
+        return False
+    if _is_label_value_line(candidate):
+        return False
+    if _is_list_item(candidate):
+        return False
+    if _ends_sentence(candidate):
+        return False
+    if _ONLY_MARKS_RE.fullmatch(candidate):
+        return False
+
+    median_length = statistics_data["median_length"]
+    lower_length = statistics_data["lower_length"]
+
+    # A heading is relatively short inside its own document.
+    relatively_short = (
+        len(candidate) <= lower_length
+        if lower_length > 0
+        else True
+    )
+
+    # Structural evidence comes from layout, not vocabulary.
+    separated_by_layout = previous_was_blank or next_is_blank
+    followed_by_body = (
+        next_line is not None
+        and (
+            len(next_line) > len(candidate)
+            or _is_label_value_line(next_line)
+            or _is_list_item(next_line)
+        )
+    )
+
+    # Very first standalone lines often form a title block.
+    starts_document = previous_line is None and next_line is not None
+
+    return relatively_short and (
+        separated_by_layout
+        or followed_by_body
+        or starts_document
+    )
+
+
+def _line_records(text: str) -> List[Dict[str, Any]]:
+    raw_lines = text.split("\n")
+    non_empty = [line.strip() for line in raw_lines if line.strip()]
+    stats = _document_line_statistics(non_empty)
+
+    records: List[Dict[str, Any]] = []
+
+    for index, raw_line in enumerate(raw_lines):
+        line = raw_line.strip()
+        if not line:
+            records.append({"kind": "blank", "text": ""})
+            continue
+
+        previous_line = next(
+            (
+                raw_lines[position].strip()
+                for position in range(index - 1, -1, -1)
+                if raw_lines[position].strip()
+            ),
+            None,
+        )
+        next_line = next(
+            (
+                raw_lines[position].strip()
+                for position in range(index + 1, len(raw_lines))
+                if raw_lines[position].strip()
+            ),
+            None,
+        )
+
+        previous_was_blank = index == 0 or not raw_lines[index - 1].strip()
+        next_is_blank = (
+            index == len(raw_lines) - 1
+            or not raw_lines[index + 1].strip()
+        )
+
+        if _is_label_value_line(line):
+            kind = "metadata"
+        elif _is_list_item(line):
+            kind = "list_item"
+        elif _looks_like_structural_heading(
+            line,
+            previous_line=previous_line,
+            next_line=next_line,
+            previous_was_blank=previous_was_blank,
+            next_is_blank=next_is_blank,
+            statistics_data=stats,
+        ):
+            kind = "heading"
+        else:
+            kind = "body"
+
+        records.append({"kind": kind, "text": line})
+
+    return records
+
+
+def _join_wrapped_body_lines(lines: Sequence[str]) -> str:
+    """
+    Join lines that were wrapped only by the PDF layout.
+
+    Sentence-ending punctuation remains a real boundary.
     """
     if not lines:
         return ""
 
-    parts = [str(lines[0]).strip()]
+    result = lines[0].strip()
 
-    for previous, current in zip(lines, lines[1:]):
-        previous = str(previous).strip()
-        current = str(current).strip()
+    for line in lines[1:]:
+        current = line.strip()
+        if not current:
+            continue
 
-        meaningful_break = (
-            bool(re.search(r"[.!?؟;:]$", previous))
-            or _looks_like_heading_line(current)
-            or _is_metadata_line(current)
-            or bool(_NUMBERED_ITEM_RE.match(current))
-            or bool(_HEBREW_ITEM_RE.match(current))
-            or bool(re.match(r"^[\u2022•●▪▫◦]\s+", current))
-        )
+        if result.endswith(("-", "־")):
+            result = result.rstrip("-־") + current
+        else:
+            result = f"{result} {current}"
 
-        separator = BOUNDARY if meaningful_break else " "
-        parts.append(separator + current)
-
-    return "".join(parts).strip()
+    return re.sub(r"\s+", " ", result).strip()
 
 
-def _structure_paragraph(lines):
-    """
-    Convert one raw paragraph into structural units.
+def _split_sentences(text: str) -> List[str]:
+    protected_text, protected = _protect_inline_patterns(text)
 
-    Wrapped PDF lines are joined, but natural boundaries are preserved with
-    a temporary marker so sentence splitting can use them later.
-    """
-    if not lines:
-        return []
-
-    units = []
-    index = 0
-
-    first_metadata_index = next(
-        (
-            position
-            for position, line in enumerate(lines)
-            if _is_metadata_line(line)
-        ),
-        None,
-    )
-
-    title_lines = []
-    if first_metadata_index is not None:
-        title_lines = lines[:first_metadata_index]
-        index = first_metadata_index
-
-        if title_lines:
-            units.append(_join_wrapped_lines_naturally(title_lines))
-
-    metadata = []
-    while index < len(lines) and _is_metadata_line(lines[index]):
-        metadata.append(lines[index])
-        index += 1
-
-    if metadata:
-        # Metadata is compact, but each field keeps a natural boundary.
-        units.append(BOUNDARY.join(metadata))
-
-    remaining = lines[index:]
-    if not remaining:
-        if not units and title_lines:
-            units.append(_join_wrapped_lines_naturally(title_lines))
-        return [unit for unit in units if unit]
-
-    if _looks_like_heading_line(remaining[0]) and len(remaining) > 1:
-        heading = remaining[0]
-        body = _join_wrapped_lines_naturally(remaining[1:])
-        units.append(f"{heading}{BOUNDARY}{body}".strip())
-    else:
-        units.append(_join_wrapped_lines_naturally(remaining))
-
-    return [unit for unit in units if unit]
-
-
-def _insert_list_boundaries(text):
-    """Insert boundaries for bullets and list items."""
-    bullet_chars = r"[\u2022•●▪▫◦]"
-    text = re.sub(rf"(?:^|\s){bullet_chars}\s+(?=\S)", BOUNDARY, text)
-
-    text = re.sub(
-        r"(?:^|\s)(\d{1,3})\s*[\.\)]\s*(?=[^\d\s])",
-        lambda match: BOUNDARY + f"<LISTNUM_{match.group(1)}> ",
-        text,
-    )
-
-    text = re.sub(
-        r"(?:^|\s)([א-ת])\s*[\.\)]\s+(?=\S)",
-        lambda match: BOUNDARY + f"<LISTHEB_{match.group(1)}> ",
-        text,
-    )
-
-    text = re.sub(r"\s*---+\s*", BOUNDARY, text)
-    return text
-
-
-def _split_sentences(text):
-    """Split punctuation boundaries after special patterns are protected."""
-    protected_text, protected = _protect_special_patterns(text)
-    protected_text = _insert_list_boundaries(protected_text)
-
-    parts = re.split(
-        r"\s*<SPLIT_BOUNDARY>\s*|"
-        r"(?:(?<=[!?؟])|(?<=[א-תA-Za-z][.]))\s+(?=[א-תA-Za-z0-9])",
+    pieces = re.split(
+        r"(?<=[.!?؟…])\s+(?=[^\s])",
         protected_text,
     )
 
-    sentences = []
-    for part in parts:
-        part = _restore_special_patterns(part.strip(), protected)
-        part = re.sub(r"<LISTNUM_(\d+)>", r"\1.", part)
-        part = re.sub(r"<LISTHEB_([א-ת])>", r"\1.", part)
-        part = re.sub(r"\s+", " ", part).strip().strip('"').strip("'")
-
-        if len(part) < MIN_UNIT_CHARS:
-            continue
-        if _ONLY_MARKERS_RE.fullmatch(part):
-            continue
-
-        sentences.append(part)
-
-    return sentences
-
-
-def _split_by_natural_separators(text):
-    """
-    Split text by descending boundary strength.
-
-    Strong:
-    - explicit structural boundary
-    - terminal punctuation
-    - semicolon
-    - colon
-
-    Soft, used only for an already long fragment:
-    - comma
-    """
-    protected_text, protected = _protect_special_patterns(text)
-
-    strong_parts = re.split(
-        r"\s*<SPLIT_BOUNDARY>\s*|"
-        r"(?<=[.!?؟;:])\s+(?=[א-תA-Za-z0-9])",
-        protected_text,
-    )
-
-    output = []
-
-    for part in strong_parts:
-        restored = _restore_special_patterns(part.strip(), protected)
+    results: List[str] = []
+    for piece in pieces:
+        restored = _restore_inline_patterns(piece.strip(), protected)
         restored = re.sub(r"\s+", " ", restored).strip()
-
-        if not restored:
-            continue
-
-        if len(restored) <= MAX_UNIT_CHARS:
-            output.append(restored)
-            continue
-
-        comma_parts = re.split(r"(?<=,)\s+", restored)
-        output.extend(
-            part.strip()
-            for part in comma_parts
-            if part.strip()
-        )
-
-    return output
-
-
-def _pack_natural_parts(parts, max_chars=MAX_UNIT_CHARS):
-    """
-    Pack natural fragments without creating tiny or overly long units.
-    """
-    packed = []
-    current = ""
-
-    for part in parts:
-        part = str(part).strip()
-        if not part:
-            continue
-
-        candidate = part if not current else f"{current} {part}"
-
-        if len(candidate) <= max_chars:
-            current = candidate
-            continue
-
-        if current:
-            packed.append(current)
-
-        current = part
-
-    if current:
-        packed.append(current)
-
-    return packed
-
-
-def _split_by_words(text, max_chars=MAX_UNIT_CHARS):
-    """Last-resort split for a fragment with no usable punctuation."""
-    words = str(text).split()
-    chunks = []
-    current_words = []
-
-    for word in words:
-        candidate = " ".join(current_words + [word])
-
-        if len(candidate) <= max_chars:
-            current_words.append(word)
-            continue
-
-        if current_words:
-            chunks.append(" ".join(current_words))
-
-        current_words = [word]
-
-    if current_words:
-        chunks.append(" ".join(current_words))
-
-    return chunks
-
-
-def _rebalance_tiny_chunks(chunks, max_chars=MAX_UNIT_CHARS):
-    """Merge tiny fragments into a neighbour when that stays within the cap."""
-    balanced = []
-
-    for chunk in chunks:
-        chunk = str(chunk).strip()
-        if not chunk:
-            continue
-
-        if (
-            balanced
-            and len(chunk) < MIN_NATURAL_CHUNK_CHARS
-            and len(balanced[-1]) + 1 + len(chunk) <= max_chars
-        ):
-            balanced[-1] = f"{balanced[-1]} {chunk}"
-        else:
-            balanced.append(chunk)
-
-    if (
-        len(balanced) >= 2
-        and len(balanced[-1]) < MIN_NATURAL_CHUNK_CHARS
-        and len(balanced[-2]) + 1 + len(balanced[-1]) <= max_chars
-    ):
-        balanced[-2] = f"{balanced[-2]} {balanced[-1]}"
-        balanced.pop()
-
-    return balanced
-
-
-def _soft_split_long_text(text, max_chars=MAX_UNIT_CHARS):
-    """
-    Split long text at natural boundaries before falling back to word count.
-
-    The preferred unit size is around TARGET_UNIT_CHARS, with a hard cap of
-    MAX_UNIT_CHARS.
-    """
-    text = str(text).strip()
-
-    if len(text) <= max_chars:
-        return [text]
-
-    natural_parts = _split_by_natural_separators(text)
-
-    # Pack toward the target rather than filling every unit to the hard cap.
-    packed = []
-    current = ""
-
-    for part in natural_parts:
-        candidate = part if not current else f"{current} {part}"
-
-        if len(candidate) <= TARGET_UNIT_CHARS:
-            current = candidate
-            continue
-
-        if current:
-            packed.append(current)
-            current = ""
-
-        if len(part) <= max_chars:
-            current = part
-        else:
-            word_chunks = _split_by_words(part, max_chars=max_chars)
-            packed.extend(word_chunks)
-
-    if current:
-        packed.append(current)
-
-    final = []
-
-    for chunk in packed:
-        if len(chunk) <= max_chars:
-            final.append(chunk)
-        else:
-            final.extend(_split_by_words(chunk, max_chars=max_chars))
-
-    final = _rebalance_tiny_chunks(final, max_chars=max_chars)
-
-    return [
-        chunk.strip()
-        for chunk in final
-        if len(chunk.strip()) >= MIN_UNIT_CHARS
-    ]
-
-
-def _merge_short_heading_units(units):
-    """
-    Merge only a genuine standalone heading with the next unit.
-
-    Most headings are already attached in _structure_paragraph. This is a
-    conservative fallback for headings separated by an empty line.
-    """
-    merged = []
-    index = 0
-
-    while index < len(units):
-        current = str(units[index]).strip()
-
-        if (
-            _looks_like_heading_line(current)
-            and index + 1 < len(units)
-            and not _NUMBERED_ITEM_RE.match(str(units[index + 1]).strip())
-            and not _HEBREW_ITEM_RE.match(str(units[index + 1]).strip())
-        ):
-            candidate = f"{current} {str(units[index + 1]).strip()}".strip()
-            if len(candidate) <= TARGET_UNIT_CHARS:
-                merged.append(candidate)
-                index += 2
-                continue
-
-        merged.append(current)
-        index += 1
-
-    return merged
-
-
-def split_to_blocks(text):
-    """Return structural blocks while respecting PDF paragraph layout."""
-    text = normalize_text(text)
-    if not text:
-        return []
-
-    blocks = []
-    for paragraph_lines in _raw_paragraphs(text):
-        blocks.extend(_structure_paragraph(paragraph_lines))
-
-    cleaned_blocks = []
-    for block in blocks:
-        block = re.sub(r"[ \t]+", " ", block).strip()
-        block = re.sub(rf"\s*{re.escape(BOUNDARY.strip())}\s*", BOUNDARY, block)
-        if block:
-            cleaned_blocks.append(block)
-
-    return cleaned_blocks
-
-
-def split_block_to_sentences(block):
-    """Split one structural block into model-sized sentence-like units."""
-    if not block or not str(block).strip():
-        return []
-
-    # Metadata fields are intentionally kept together.
-    metadata_parts = re.split(
-        r"(?=(?:נושא|תאריך|סיווג|מיועד\\s+עבור|עבור|אל|מאת|עותק|גרסה|מחבר|subject|date|classification|to|from|cc|version|author)\\s*[:：])",
-        block,
-        flags=re.IGNORECASE,
-    )
-    metadata_parts = [part.strip() for part in metadata_parts if part.strip()]
-    if metadata_parts and all(_is_metadata_line(part) for part in metadata_parts):
-        return [block]
-
-    results = []
-    for sentence in _split_sentences(str(block).strip()):
-        results.extend(_soft_split_long_text(sentence))
+        if restored and not _ONLY_MARKS_RE.fullmatch(restored):
+            results.append(restored)
 
     return results
 
 
-def split_document(text):
+def _split_token_safe(
+    text: str,
+    *,
+    tokenizer: Any,
+    model_max_length: int | None = None,
+) -> List[str]:
     """
-    Full segmentation pipeline.
+    Split an unusually long natural unit by the active tokenizer.
 
-    1. Preserve blank-line paragraph structure.
-    2. Join wrapped PDF lines before identifying headings.
-    3. Group consecutive metadata fields.
-    4. Attach headings to their first content sentence.
-    5. Repair missing spaces after punctuation.
-    6. Protect emails, URLs, dates, times, decimals and filenames.
-    7. Split at natural punctuation and meaningful line breaks.
-    8. Keep each model unit below MAX_UNIT_CHARS.
+    The limit is read from the tokenizer/model at runtime. No character
+    threshold and no document-specific value is used.
     """
-    text = normalize_text(text)
-    if not text:
+    if tokenizer is None:
+        return [text]
+
+    configured_limit = model_max_length
+    if configured_limit is None:
+        configured_limit = getattr(tokenizer, "model_max_length", None)
+
+    if not isinstance(configured_limit, int) or configured_limit <= 0:
+        return [text]
+
+    special_count = len(
+        tokenizer.build_inputs_with_special_tokens([])
+    )
+    available_tokens = configured_limit - special_count
+    if available_tokens <= 0:
+        return [text]
+
+    token_ids = tokenizer.encode(
+        text,
+        add_special_tokens=False,
+        truncation=False,
+    )
+    if len(token_ids) <= available_tokens:
+        return [text]
+
+    chunks: List[str] = []
+    start = 0
+
+    while start < len(token_ids):
+        end = min(start + available_tokens, len(token_ids))
+        chunk_ids = token_ids[start:end]
+        chunk = tokenizer.decode(
+            chunk_ids,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=True,
+        ).strip()
+
+        if chunk:
+            chunks.append(chunk)
+
+        start = end
+
+    return chunks or [text]
+
+
+def split_to_blocks(text: Any) -> List[str]:
+    """
+    Return generic structural blocks.
+
+    Metadata, headings, list items and paragraphs are separated without
+    exposing any internal marker in the returned text.
+    """
+    normalized = normalize_text(text)
+    if not normalized:
         return []
 
-    units = []
-    for block in split_to_blocks(text):
-        units.extend(split_block_to_sentences(block))
+    records = _line_records(normalized)
+    blocks: List[str] = []
+    body_buffer: List[str] = []
 
-    units = _merge_short_heading_units(units)
+    def flush_body() -> None:
+        if not body_buffer:
+            return
+
+        joined = _join_wrapped_body_lines(body_buffer)
+        if joined:
+            blocks.append(joined)
+        body_buffer.clear()
+
+    for record in records:
+        kind = record["kind"]
+        value = record["text"]
+
+        if kind == "blank":
+            flush_body()
+            continue
+
+        if kind in {"metadata", "heading", "list_item"}:
+            flush_body()
+            blocks.append(value)
+            continue
+
+        body_buffer.append(value)
+
+        if _ends_sentence(value):
+            flush_body()
+
+    flush_body()
+    return blocks
+
+
+def split_block_to_sentences(
+    block: Any,
+    *,
+    tokenizer: Any = None,
+    model_max_length: int | None = None,
+) -> List[str]:
+    """Split one structural block into natural, model-safe units."""
+    value = normalize_text(block)
+    if not value:
+        return []
+
+    natural_units = _split_sentences(value)
+    output: List[str] = []
+
+    for unit in natural_units:
+        output.extend(
+            _split_token_safe(
+                unit,
+                tokenizer=tokenizer,
+                model_max_length=model_max_length,
+            )
+        )
 
     return [
-        re.sub(r"\s+", " ", unit).strip()
-        for unit in units
-        if len(re.sub(r"\s+", " ", unit).strip()) >= MIN_UNIT_CHARS
+        unit.strip()
+        for unit in output
+        if unit.strip() and not _ONLY_MARKS_RE.fullmatch(unit.strip())
     ]
+
+
+def split_document(
+    text: Any,
+    *,
+    tokenizer: Any = None,
+    model_max_length: int | None = None,
+) -> List[str]:
+    """
+    Segment a document using only generic structural rules.
+
+    Optional tokenizer arguments allow the caller to enforce the active
+    model's real token limit dynamically.
+    """
+    normalized = normalize_text(text)
+    if not normalized:
+        return []
+
+    results: List[str] = []
+
+    for block in split_to_blocks(normalized):
+        if _is_label_value_line(block):
+            units = [block]
+        elif _is_list_item(block):
+            units = [block]
+        elif "\n" not in block and not _ends_sentence(block):
+            # Structurally detected standalone heading.
+            units = [block]
+        else:
+            units = split_block_to_sentences(
+                block,
+                tokenizer=tokenizer,
+                model_max_length=model_max_length,
+            )
+
+        for unit in units:
+            cleaned = re.sub(r"\s+", " ", unit).strip()
+            if not cleaned:
+                continue
+            if "<SPLIT_BOUNDARY>" in cleaned:
+                raise RuntimeError(
+                    "Internal segmentation marker leaked into output."
+                )
+            results.append(cleaned)
+
+    return results
