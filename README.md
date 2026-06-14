@@ -18,7 +18,7 @@ The system extracts and normalizes text from PDF files, divides the text into ge
 - Decision engine for combining detection evidence
 - JSON and CSV result export
 - Marked PDF report generation
-- Desktop GUI
+- Desktop interface launched through `main.py`
 - Automated runtime, model, training, and integration tests
 
 ---
@@ -172,13 +172,13 @@ Then activate again:
 
 # Run the System
 
-## Graphical Interface
-
-Recommended for demonstrations:
+The official entry point is:
 
 ```powershell
-python gui.py
+python main.py
 ```
+
+`main.py` launches the application interface.
 
 Then:
 
@@ -188,19 +188,9 @@ Then:
 4. Wait for analysis to finish
 5. Open the marked PDF, JSON, or CSV report
 
-During analysis, the PDF-selection button is locked.
+During analysis, the PDF-selection button is locked until processing finishes.
 
-## Command Line
-
-```powershell
-python main.py
-```
-
-Default paths are configured in:
-
-```text
-config.py
-```
+Do not run `gui.py` directly for normal use. Use `main.py`.
 
 ---
 
@@ -273,8 +263,8 @@ LeakShield/
 
 | File / Folder | Description |
 |---|---|
-| `main.py` | Command-line entry point |
-| `gui.py` | Desktop interface |
+| `main.py` | Official application entry point |
+| `gui.py` | Desktop interface used by `main.py` |
 | `analysis_pipeline.py` | End-to-end analysis pipeline |
 | `decision_engine.py` | Combines Regex, sequence, and token evidence |
 | `detectors.py` | Structured Regex detection |
@@ -358,21 +348,6 @@ Expected current result:
 python -m pytest tests -q
 ```
 
-The suite includes tests for:
-
-- Analysis pipeline
-- Dataset construction
-- Decision engine
-- Evaluation and calibration
-- Multi-task model
-- Dataset auditing
-- Data-leakage analysis
-- Runtime integration
-- Marked PDF report
-- Regex and HeBERT production contract
-- Sensitive-text analysis
-- Training scripts
-
 ---
 
 # Verify the Production Model
@@ -434,7 +409,7 @@ Its main contribution is the integration of:
 - Multi-task sequence and token classification
 - Decision logic
 - Visual and structured reporting
-- GUI-based operation
+- Interface-based operation through `main.py`
 - Automated validation
 
 The main requirement for future production deployment is broader real-world labeled data and independent external evaluation.
